@@ -1,26 +1,76 @@
-# Epic 2.3 GA Range Recommendation System
 
-This repository contains a modular, production-grade pipeline for optimizing plant extraction processes using machine learning. Developed as part of the Innovo Intelligent Plant Extraction Optimization System, the pipeline predicts bioactive compound yield, recommends optimal process parameters, and verifies subcritical safety conditions using historical experiment data.
-
-## Overview
-
-The system automates manual analysis of plant extraction experiments. It ingests CSV files containing process data (e.g., temperature, pressure, time, pH) and yield measurements, then:
-
-- Cleans and validates the data
-- Detects outliers and unsafe conditions
-- Extracts high-yield parameter ranges
-- Trains multioutput XGBoost models
-- Recommends optimal settings per plant
-- Summarizes the best-performing process
-
-## Features
-
-- Native multioutput modeling with XGBoost
-- Temporal derivative feature engineering
-- Outlier detection with flagged values
-- Subcritical safety filtering via flag logic
-- Per-plant recommendations with dynamic range formatting
-- Batch processing across multiple plant files
-- Optional testing block for diagnostics (disabled by default)
+### Subcritical-Safe Extraction Recommendation Engine
 
 
+This project implements a safety-aware, yield-maximizing recommendation engine for plant compound extraction. It enforces subcritical pressure-temperature constraints using NIST saturation data and selects optimal set-points using machine learning.
+
+**Features**
+
+**- Subcritical Safety Enforcement:** Classifies extraction configurations as SAFE, WARNING, or DANGEROUS using saturation pressure logic.
+
+**- Yield Prediction (Model 2.2):** Trains an XGBoost regression model on empirical plant data to predict extraction yield.
+
+**- Set-Point Recommendation (Model 2.3):** Performs grid search to find higher-yielding subcritical-safe overrides.
+
+**- Stakeholder-Readable Reporting:** Outputs time, temperature, pressure, pH, yield, safety status, and diagnostics in clear, audit-ready format.
+
+**- Final Recommendation Across Plants:** Selects the highest-yielding subcritical-safe configuration across all inputs.
+
+
+
+
+
+Sample Output
+
+================================================================================
+🌿 Recommended Extraction Parameters — Glycyrrhiza_Glabra
+================================================================================
+
+🌟 Best Yield Parameters (Subcritical-Safe):
+- Time min: 5.0
+- Temperature c: 145.16
+- Pressure bar abs: 19.7
+- Ph neutral est: 5.75
+- Yield: 14.12
+
+Safety Status: ⚠️ Warning
+
+Why Flagged:
+The pressure of 19.70 bar exceeds the subcritical assurance threshold at 145.16 °C.
+Threshold: ~8.49 bar (150% of saturation pressure)
+Details: 19.70 > 8.49
+
+Suggested Resolution:
+Reduce pressure below threshold or confirm vessel integrity for high-pressure operation.
+
+================================================================================
+🌿 Recommended Extraction Parameters — Ellagic_Acid_Peel
+================================================================================
+
+🌟 Best Yield Parameters (Subcritical-Safe):
+- Time min: 18.0
+- Temperature c: 130.144
+- Pressure bar abs: 9.441
+- Ph neutral est: 5.94
+- Yield: 4.64
+
+Safety Status: ⚠️ Warning
+
+Why Flagged:
+The pressure of 9.44 bar exceeds the subcritical assurance threshold at 130.14 °C.
+Threshold: ~6.30 bar (150% of saturation pressure)
+Details: 9.44 > 6.30
+
+Suggested Resolution:
+Reduce pressure below threshold or confirm vessel integrity for high-pressure operation.
+
+================================================================================
+🏆 Final Recommendation: Highest-Yielding Subcritical-Safe Configuration
+================================================================================
+
+Top Performer: Glycyrrhiza_Glabra
+Yield: 14.12%
+Safety Status: ⚠️ Warning
+Pressure of 19.70 bar exceeds subcritical assurance threshold at 145.16 °C.
+Threshold: ~8.49 bar (150% of saturation pressure)
+Proceed only if vessel integrity is validated or pressure is reduced.
